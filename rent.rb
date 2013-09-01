@@ -41,6 +41,7 @@ get '/' do
   @all_tenants = @months.map {|k, v| v[:tenants].keys}.inject(:|).sort
 
   @months.each do |month_name, month|
+    @months[month_name][:parameters] = month.reject {|k, v| k == :tenants}.to_json
     @months[month_name][:rent] = calculate_rent(month[:rooms], month[:extra_roommates], month[:partial_months], month[:fixed_rents])
   end
 

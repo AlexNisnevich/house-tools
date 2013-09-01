@@ -5,6 +5,7 @@
 		<% @all_tenants.each do |tenant| %>
 			<th><%= tenant %></th>
     	<% end %>
+    	<th style="text-align: left;">Parameters</th>
 	</tr>
 	<% @months.each do |month_name, month| %>
 		<tr>
@@ -16,6 +17,7 @@
 					<% end %>
 				</td>
 	    	<% end %>
+	    	<td style="font-size: 0.8em;"><%= month[:parameters] %></td>
 		</tr>
 	<% end %>
 </table>
