@@ -18,7 +18,8 @@ get '/' do
       rooms: ['a', 'd', 'j3', 'm', 'j1', 's', 'j2'],
       extra_roommates: {'s' => 0.5},
       partial_months: {'j3' => 0.25},
-      fixed_rents: {}
+      fixed_rents: {},
+      extra_fees: {'j1' => 30}
     },
     'September' => {
       tenants: {
@@ -33,7 +34,8 @@ get '/' do
       rooms: ['a', 'd', 'j3', 'm', 'j1', 's', 'j2'],
       extra_roommates: {},
       partial_months: {'s' => 0.2},
-      fixed_rents: {'j3' => 660.68}
+      fixed_rents: {'j3' => 660.68},
+      extra_fees: {'j1' => 30}
     }
   }
   @last_month = @months.values.last
@@ -42,7 +44,7 @@ get '/' do
 
   @months.each do |month_name, month|
     @months[month_name][:parameters] = month.reject {|k, v| k == :tenants}.to_json
-    @months[month_name][:rent] = calculate_rent(month[:rooms], month[:extra_roommates], month[:partial_months], month[:fixed_rents])
+    @months[month_name][:rent] = calculate_rent(month[:rooms], month[:extra_roommates], month[:partial_months], month[:fixed_rents], month[:extra_fees])
   end
 
   erb :index
@@ -72,7 +74,7 @@ STARTING_COMMON_PRICE = 246.61
 TOTAL_RENT = 4_200
 TOLERANCE = 0.01
 
-def calculate_rent(rooms, extra_roommates = {}, partial_months = {}, fixed_rents = {})
+def calculate_rent(rooms, extra_roommates = {}, partial_months = {}, fixed_rents = {}, extra_fees = {})
   num_rooms = rooms.count
   rooms = rooms.reject {|r| fixed_rents.include? r }
   room_sizes = ROOM_SIZES.select {|k,v| rooms.include? k }
@@ -92,14 +94,13 @@ def calculate_rent(rooms, extra_roommates = {}, partial_months = {}, fixed_rents
   normalizer = (TOTAL_RENT - fixed_rents.values.inject(0, :+)) / total_before_normalization
 
   rents = room_sizes.merge(fixed_rents).map do |room, size|
-    rent = if fixed_rents.include? room
-              fixed_rents[room]
-           else
-             ((PRICE_PER_SQ_FT[num_rooms] * size +
-                STARTING_COMMON_PRICE * tenants_per_room[room]) *
-                    (length_of_stay[room] * normalizer))
-           end
-    '%.2f' % rent
+    if fixed_rents.include? room
+      fixed_rents[room]
+    else
+      ((PRICE_PER_SQ_FT[num_rooms] * size +
+        STARTING_COMMON_PRICE * tenants_per_room[room]) *
+            (length_of_stay[room] * normalizer))
+    end
   end
 
   total_rent = rents.map(&:to_f).inject(:+)
@@ -109,12 +110,20 @@ def calculate_rent(rooms, extra_roommates = {}, partial_months = {}, fixed_rents
     # potentially make one penny adjustment to :j3 (or :a, if :j3 is unoccupied)
     adjustment = TOTAL_RENT - total_rent
     if rents_by_room.include? 'j3'
-      rents_by_room['j3'] = '%.2f' % (rents_by_room['j3'].to_f + adjustment)
+      rents_by_room['j3'] += adjustment
     else
-      rents_by_room['a'] = '%.2f' % (rents_by_room['a'].to_f + adjustment)
+      rents_by_room['j3'] += adjustment
     end
   else
     raise "Expected total to be #{TOTAL_RENT - TOLERANCE} - #{TOTAL_RENT + TOLERANCE} but got #{total_rent}"
+  end
+
+  extra_fees.each do |room, fee|
+    rents_by_room[room] += fee
+  end
+
+  rents_by_room.each do |room, rent|
+    rents_by_room[room] = '%.2f' % rents_by_room[room]
   end
 
   rents_by_room
