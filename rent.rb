@@ -49,11 +49,21 @@ def calculate_rent(rooms, extra_roommates = {}, partial_months = {}, fixed_rents
   end
 
   total_rent = rents.map(&:to_f).inject(:+)
-  unless total_rent >= TOTAL_RENT - TOLERANCE && total_rent <= TOTAL_RENT + TOLERANCE
+  rents_by_room = Hash[room_sizes.merge(fixed_rents).map { |k, v| k }.zip(rents)]
+
+  if total_rent >= TOTAL_RENT - TOLERANCE && total_rent <= TOTAL_RENT + TOLERANCE
+    # potentially make one penny adjustment to :j3 (or :a, if :j3 is unoccupied)
+    adjustment = TOTAL_RENT - total_rent
+    if rents_by_room.include? :j3
+      rents_by_room[:j3] = '%.2f' % (rents_by_room[:j3].to_f + adjustment)
+    else
+      rents_by_room[:a] = '%.2f' % (rents_by_room[:a].to_f + adjustment)
+    end
+  else
     raise "Expected total to be #{TOTAL_RENT - TOLERANCE} - #{TOTAL_RENT + TOLERANCE} but got #{total_rent}"
   end
 
-  Hash[room_sizes.merge(fixed_rents).map { |k, v| k }.zip(rents)]
+  rents_by_room
 end
 
 puts 'TEST CASES'
@@ -73,4 +83,4 @@ puts calculate_rent [:a, :d, :j3, :m, :j1, :s, :j2], {:s => 0.5}, {:j3 => 0.25}
 puts 'Alex dies:'
 puts calculate_rent [:d, :j3, :m, :j1, :s, :j2]
 puts 'SEPTEMBER: Sara moving out after 1/5 month and Danielle moving in with fixed rent:'
-puts calculate_rent [:a, :d, :j3, :m, :j1, :s, :j2], {}, {:s => 0.2}, {:j3 => 660.69}
+puts calculate_rent [:a, :d, :j3, :m, :j1, :s, :j2], {}, {:s => 0.2}, {:j3 => 660.68}
