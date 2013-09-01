@@ -1,0 +1,30 @@
+<h1>Monthly Rent</h1>
+<table>
+	<tr>
+		<th></th>
+		<% @all_tenants.each do |tenant| %>
+			<th><%= tenant %></th>
+    	<% end %>
+	</tr>
+	<% @months.each do |month_name, month| %>
+		<tr>
+			<td><strong><%= month_name %></strong></td>
+			<% @all_tenants.each do |tenant| %>
+				<td style="width: 100px; text-align: center;">
+					<% if month[:tenants][tenant] %>
+						$<%= month[:rent][month[:tenants][tenant]] %>
+					<% end %>
+				</td>
+	    	<% end %>
+		</tr>
+	<% end %>
+</table>
+
+<h1>Calculate Rent</h1>
+<form action="/calculate" method="post">
+	Rooms: <input name="rooms" type="text" value='<%= @last_month[:rooms].to_json %>' /><br />
+	Extra Roommates: <input name="extra_roommates" type="text" value='<%= @last_month[:extra_roommates].to_json %>' /><br />
+	Partial Months: <input name="partial_months" type="text" value='<%= @last_month[:partial_months].to_json %>' /><br />
+	Fixed Rents <input name="fixed_rents" type="text" value='<%= @last_month[:fixed_rents].to_json %>' /><br />
+	<input type="submit" />
+</form>

@@ -1,11 +1,64 @@
+require 'sinatra'
+require 'json'
+
+get '/' do
+  html = ""
+
+  @months = {
+    'August' => {
+      tenants: {
+        'Alex' => 'a',
+        'Dmitry' => 'd',
+        'James' => 'j2',
+        'Jimmy' => 'j1',
+        'Jordan' => 'j3',
+        'Mel' => 'm',
+        'Sara' => 's'
+      },
+      rooms: ['a', 'd', 'j3', 'm', 'j1', 's', 'j2'],
+      extra_roommates: {'s' => 0.5},
+      partial_months: {'j3' => 0.25},
+      fixed_rents: {}
+    },
+    'September' => {
+      tenants: {
+        'Alex' => 'a',
+        'Danielle' => 'j3',
+        'Dmitry' => 'd',
+        'James' => 'j2',
+        'Jimmy' => 'j1',
+        'Mel' => 'm',
+        'Sara' => 's'
+      },
+      rooms: ['a', 'd', 'j3', 'm', 'j1', 's', 'j2'],
+      extra_roommates: {},
+      partial_months: {'s' => 0.2},
+      fixed_rents: {'j3' => 660.68}
+    }
+  }
+  @last_month = @months.values.last
+
+  @all_tenants = @months.map {|k, v| v[:tenants].keys}.inject(:|).sort
+
+  @months.each do |month_name, month|
+    @months[month_name][:rent] = calculate_rent(month[:rooms], month[:extra_roommates], month[:partial_months], month[:fixed_rents])
+  end
+
+  erb :index
+end
+
+post '/calculate' do
+  calculate_rent(JSON.parse(params[:rooms]), JSON.parse(params[:extra_roommates]), JSON.parse(params[:partial_months]), JSON.parse(params[:fixed_rents])).to_s
+end
+
 ROOM_SIZES = { # rooms named after initial occupant
-	a: 205,
-	d: 205,
-  j3: 170,
-  m: 166,
-  j1: 102,
-  s: 93,
-  j2: 82.5
+	'a' => 205,
+	'd' => 205,
+  'j3' => 170,
+  'm' => 166,
+  'j1' => 102,
+  's' => 93,
+  'j2' => 82.5
 }
 
 PRICE_PER_SQ_FT = { # based on number of people
@@ -20,7 +73,7 @@ TOLERANCE = 0.01
 
 def calculate_rent(rooms, extra_roommates = {}, partial_months = {}, fixed_rents = {})
   num_rooms = rooms.count
-  rooms.reject! {|r| fixed_rents.include? r }
+  rooms = rooms.reject {|r| fixed_rents.include? r }
   room_sizes = ROOM_SIZES.select {|k,v| rooms.include? k }
 
   num_tenants = rooms.count + extra_roommates.count
@@ -54,10 +107,10 @@ def calculate_rent(rooms, extra_roommates = {}, partial_months = {}, fixed_rents
   if total_rent >= TOTAL_RENT - TOLERANCE && total_rent <= TOTAL_RENT + TOLERANCE
     # potentially make one penny adjustment to :j3 (or :a, if :j3 is unoccupied)
     adjustment = TOTAL_RENT - total_rent
-    if rents_by_room.include? :j3
-      rents_by_room[:j3] = '%.2f' % (rents_by_room[:j3].to_f + adjustment)
+    if rents_by_room.include? 'j3'
+      rents_by_room['j3'] = '%.2f' % (rents_by_room['j3'].to_f + adjustment)
     else
-      rents_by_room[:a] = '%.2f' % (rents_by_room[:a].to_f + adjustment)
+      rents_by_room['a'] = '%.2f' % (rents_by_room['a'].to_f + adjustment)
     end
   else
     raise "Expected total to be #{TOTAL_RENT - TOLERANCE} - #{TOTAL_RENT + TOLERANCE} but got #{total_rent}"
@@ -66,21 +119,21 @@ def calculate_rent(rooms, extra_roommates = {}, partial_months = {}, fixed_rents
   rents_by_room
 end
 
-puts 'TEST CASES'
-puts 'Verify against Jimmy\'s numbers if you don\'t trust me:'
-puts "\thttps://docs.google.com/spreadsheet/ccc?key=0AqqTjCcbT2O9dE9uWTJJLURaOXRjanNGUXJrdTcxVkE#gid=0"
-puts '[Note: rooms are indexed by initial occupant (j1 = Jimmy, j2 = James, j3 = Jordan)]'
-puts '6 person rent with downtairs living room:'
-puts calculate_rent [:a, :d, :m, :j1, :s, :j2]
-puts '7 person rent:'
-puts calculate_rent [:a, :d, :j3, :m, :j1, :s, :j2]
-puts '7 person rent with Sara roommate:'
-puts calculate_rent [:a, :d, :j3, :m, :j1, :s, :j2], {:s => 1}
-puts '1st month with Jordan (June):'
-puts calculate_rent [:a, :d, :j3, :m, :j1, :s, :j2], {}, {}, {:j3 => 900}
-puts '1/2 month Sara roommate with Jordan mostly moved out:'
-puts calculate_rent [:a, :d, :j3, :m, :j1, :s, :j2], {:s => 0.5}, {:j3 => 0.25}
-puts 'Alex dies:'
-puts calculate_rent [:d, :j3, :m, :j1, :s, :j2]
-puts 'SEPTEMBER: Sara moving out after 1/5 month and Danielle moving in with fixed rent:'
-puts calculate_rent [:a, :d, :j3, :m, :j1, :s, :j2], {}, {:s => 0.2}, {:j3 => 660.68}
+# puts 'TEST CASES'
+# puts 'Verify against Jimmy\'s numbers if you don\'t trust me:'
+# puts "\thttps://docs.google.com/spreadsheet/ccc?key=0AqqTjCcbT2O9dE9uWTJJLURaOXRjanNGUXJrdTcxVkE#gid=0"
+# puts '[Note: rooms are indexed by initial occupant (j1 = Jimmy, j2 = James, j3 = Jordan)]'
+# puts '6 person rent with downtairs living room:'
+# puts calculate_rent [:a, :d, :m, :j1, :s, :j2]
+# puts '7 person rent:'
+# puts calculate_rent [:a, :d, :j3, :m, :j1, :s, :j2]
+# puts '7 person rent with Sara roommate:'
+# puts calculate_rent [:a, :d, :j3, :m, :j1, :s, :j2], {:s => 1}
+# puts '1st month with Jordan (June):'
+# puts calculate_rent [:a, :d, :j3, :m, :j1, :s, :j2], {}, {}, {:j3 => 900}
+# puts '1/2 month Sara roommate with Jordan mostly moved out:'
+# puts calculate_rent [:a, :d, :j3, :m, :j1, :s, :j2], {:s => 0.5}, {:j3 => 0.25}
+# puts 'Alex dies:'
+# puts calculate_rent [:d, :j3, :m, :j1, :s, :j2]
+# puts 'SEPTEMBER: Sara moving out after 1/5 month and Danielle moving in with fixed rent:'
+# puts calculate_rent [:a, :d, :j3, :m, :j1, :s, :j2], {}, {:s => 0.2}, {:j3 => 660.68}
