@@ -36,6 +36,38 @@ get '/' do
       partial_months: {'s' => 0.2},
       fixed_rents: {'j3' => 660.68},
       extra_fees: {'j1' => 30}
+    },
+    'October' => {
+      tenants: {
+        'Alex' => 'a',
+        'Danielle' => 'j3',
+        'Dmitry' => 'd',
+        'James' => 'j2',
+        'Jimmy' => 'j1',
+        'Mel' => 'm',
+        'Noemie' => 's'
+      },
+      rooms: ['a', 'd', 'j3', 'm', 'j1', 's', 'j2'],
+      extra_roommates: {},
+      partial_months: {},
+      fixed_rents: {'s' => 824.71},
+      extra_fees: {'j1' => 30}
+    },
+    'November' => {
+      tenants: {
+        'Alex' => 'a',
+        'Danielle' => 'j3',
+        'Dmitry' => 'd',
+        'James' => 'j2',
+        'Jimmy' => 'j1',
+        'Mel' => 'm',
+        'Noemie' => 's'
+      },
+      rooms: ['a', 'd', 'j3', 'm', 'j1', 's', 'j2'],
+      extra_roommates: {},
+      partial_months: {},
+      fixed_rents: {},
+      extra_fees: {'j1' => 30}
     }
   }
   @last_month = @months.values.last
