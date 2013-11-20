@@ -5,38 +5,38 @@ get '/' do
   html = ""
 
   @months = {
-    'August' => {
-      tenants: {
-        'Alex' => 'a',
-        'Dmitry' => 'd',
-        'James' => 'j2',
-        'Jimmy' => 'j1',
-        'Jordan' => 'j3',
-        'Mel' => 'm',
-        'Sara' => 's'
-      },
-      rooms: ['a', 'd', 'j3', 'm', 'j1', 's', 'j2'],
-      extra_roommates: {'s' => 0.5},
-      partial_months: {'j3' => 0.25},
-      fixed_rents: {},
-      extra_fees: {'j1' => 30}
-    },
-    'September' => {
-      tenants: {
-        'Alex' => 'a',
-        'Danielle' => 'j3',
-        'Dmitry' => 'd',
-        'James' => 'j2',
-        'Jimmy' => 'j1',
-        'Mel' => 'm',
-        'Sara' => 's'
-      },
-      rooms: ['a', 'd', 'j3', 'm', 'j1', 's', 'j2'],
-      extra_roommates: {},
-      partial_months: {'s' => 0.2},
-      fixed_rents: {'j3' => 660.68},
-      extra_fees: {'j1' => 30}
-    },
+    #'August' => {
+    #  tenants: {
+    #    'Alex' => 'a',
+    #    'Dmitry' => 'd',
+    #    'James' => 'j2',
+    #    'Jimmy' => 'j1',
+    #    'Jordan' => 'j3',
+    #    'Mel' => 'm',
+    #    'Sara' => 's'
+    #  },
+    #  rooms: ['a', 'd', 'j3', 'm', 'j1', 's', 'j2'],
+    #  extra_roommates: {'s' => 0.5},
+    #  partial_months: {'j3' => 0.25},
+    #  fixed_rents: {},
+    #  extra_fees: {'j1' => 30}
+    #},
+    #'September' => {
+    #  tenants: {
+    #    'Alex' => 'a',
+    #    'Danielle' => 'j3',
+    #    'Dmitry' => 'd',
+    #    'James' => 'j2',
+    #    'Jimmy' => 'j1',
+    #    'Mel' => 'm',
+    #    'Sara' => 's'
+    #  },
+    #  rooms: ['a', 'd', 'j3', 'm', 'j1', 's', 'j2'],
+    #  extra_roommates: {},
+    #  partial_months: {'s' => 0.2},
+    #  fixed_rents: {'j3' => 660.68},
+    #  extra_fees: {'j1' => 30}
+    #},
     'October' => {
       tenants: {
         'Alex' => 'a',
@@ -54,6 +54,22 @@ get '/' do
       extra_fees: {'j1' => 30}
     },
     'November' => {
+      tenants: {
+        'Alex' => 'a',
+        'Danielle' => 'j3',
+        'Dmitry' => 'd',
+        'James' => 'j2',
+        'Jimmy' => 'j1',
+        'Mel' => 'm',
+        'Noemie' => 's'
+      },
+      rooms: ['a', 'd', 'j3', 'm', 'j1', 's', 'j2'],
+      extra_roommates: {},
+      partial_months: {},
+      fixed_rents: {},
+      extra_fees: {'j1' => 30}
+    },
+    'December' => {
       tenants: {
         'Alex' => 'a',
         'Danielle' => 'j3',
