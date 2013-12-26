@@ -37,7 +37,7 @@ get '/' do
     #  fixed_rents: {'j3' => 660.68},
     #  extra_fees: {'j1' => 30}
     #},
-    'October' => {
+    'October 2013' => {
       tenants: {
         'Alex' => 'a',
         'Danielle' => 'j3',
@@ -53,7 +53,7 @@ get '/' do
       fixed_rents: {'s' => 824.71},
       extra_fees: {'j1' => 30}
     },
-    'November' => {
+    'November 2013' => {
       tenants: {
         'Alex' => 'a',
         'Danielle' => 'j3',
@@ -69,7 +69,7 @@ get '/' do
       fixed_rents: {},
       extra_fees: {'j1' => 30}
     },
-    'December' => {
+    'December 2013' => {
       tenants: {
         'Alex' => 'a',
         'Danielle' => 'j3',
@@ -78,6 +78,22 @@ get '/' do
         'Jimmy' => 'j1',
         'Mel' => 'm',
         'Noemie' => 's'
+      },
+      rooms: ['a', 'd', 'j3', 'm', 'j1', 's', 'j2'],
+      extra_roommates: {},
+      partial_months: {},
+      fixed_rents: {},
+      extra_fees: {'j1' => 30}
+    },
+    'January 2014' => {
+      tenants: {
+        'Alex' => 'a',
+        'Danielle' => 'j3',
+        'Dmitry' => 'd',
+        'James' => 'j2',
+        'Jimmy' => 'j1',
+        'Mel' => 'm',
+        'Asali' => 's'
       },
       rooms: ['a', 'd', 'j3', 'm', 'j1', 's', 'j2'],
       extra_roommates: {},
