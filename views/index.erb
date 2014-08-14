@@ -4,20 +4,34 @@
 		<th></th>
 		<% @all_tenants.each do |tenant| %>
 			<th><%= tenant %></th>
-    	<% end %>
-    	<th style="text-align: left;">Parameters</th>
+		<% end %>
+		<th style="text-align: left;">Parameters</th>
 	</tr>
 	<% @months.each do |month_name, month| %>
 		<tr>
 			<td><strong><%= month_name %></strong></td>
 			<% @all_tenants.each do |tenant| %>
 				<td style="width: 100px; text-align: center;">
-					<% if month[:tenants][tenant] %>
-						$<%= month[:rent][month[:tenants][tenant]] %>
+					<% if month[:tenant_names].include? tenant %>
+						<%
+							room = month[:tenants][tenant]
+							rent = month[:rent][room]
+							if month[:split_rooms]
+								month[:split_rooms].each do |name, roommates|
+									room_rent = month[:rent][month[:tenants][name]]
+									roommates.each do |roommate, ratio|
+										if roommate == tenant
+											rent = room_rent * ratio
+										end
+									end
+								end
+							end
+						%>
+						$<%= '%.2f' % rent %>
 					<% end %>
 				</td>
-	    	<% end %>
-	    	<td style="font-size: 0.8em;"><%= month[:parameters] %></td>
+			<% end %>
+			<td style="font-size: 0.8em;"><%= month[:parameters] %></td>
 		</tr>
 	<% end %>
 </table>

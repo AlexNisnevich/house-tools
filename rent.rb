@@ -100,15 +100,132 @@ get '/' do
       partial_months: {},
       fixed_rents: {},
       extra_fees: {'j1' => 30}
+    },
+    'February 2014' => {
+      tenants: {
+        'Alex' => 'a',
+        'Danielle' => 'j3',
+        'Dmitry' => 'd',
+        'James' => 'j2',
+        'Jimmy' => 'j1',
+        'Mel' => 'm',
+        'Asali' => 's'
+      },
+      rooms: ['a', 'd', 'j3', 'm', 'j1', 's', 'j2'],
+      extra_roommates: {},
+      partial_months: {},
+      fixed_rents: {},
+      extra_fees: {'j1' => 30}
+    },
+    'March 2014' => {
+      tenants: {
+        'Alex' => 'a',
+        'Danielle' => 'j3',
+        'Dmitry' => 'd',
+        'James' => 'j2',
+        'Jimmy' => 'j1',
+        'Mel' => 'm',
+        'Asali' => 's'
+      },
+      rooms: ['a', 'd', 'j3', 'm', 'j1', 's', 'j2'],
+      extra_roommates: {},
+      partial_months: {},
+      fixed_rents: {},
+      extra_fees: {'j1' => 30}
+    },
+    'April 2014' => {
+      tenants: {
+        'Alex' => 'a',
+        'Danielle' => 'j3',
+        'Dmitry' => 'd',
+        'James' => 'j2',
+        'Jimmy' => 'j1',
+        'Mel' => 'm',
+        'Asali' => 's'
+      },
+      rooms: ['a', 'd', 'j3', 'm', 'j1', 's', 'j2'],
+      extra_roommates: {},
+      partial_months: {},
+      fixed_rents: {},
+      extra_fees: {'j1' => 30}
+    },
+    'May 2014' => {
+      tenants: {
+        'Alex' => 'a',
+        'Danielle' => 'j3',
+        'Dmitry' => 'd',
+        'James' => 'j2',
+        'Jimmy' => 'j1',
+        'Mel' => 'm',
+        'Asali' => 's'
+      },
+      rooms: ['a', 'd', 'j3', 'm', 'j1', 's', 'j2'],
+      extra_roommates: {},
+      partial_months: {},
+      fixed_rents: {},
+      extra_fees: {'j1' => 30}
+    },
+    'June 2014' => {
+      tenants: {
+        'Alex' => 'a',
+        'Danielle' => 'j3',
+        'Dmitry' => 'd',
+        'James' => 'j2',
+        'Jimmy' => 'j1',
+        'Mel' => 'm',
+        'Asali' => 's'
+      },
+      rooms: ['a', 'd', 'j3', 'm', 'j1', 's', 'j2'],
+      extra_roommates: {},
+      partial_months: {},
+      fixed_rents: {},
+      extra_fees: {'j1' => 30}
+    },
+    'July 2014' => {
+      tenants: {
+        'Alex' => 'a',
+        'Danielle' => 'j3',
+        'Dmitry' => 'd',
+        'James' => 'j2',
+        'Jimmy' => 'j1',
+        'Mel' => 'm',
+        'Asali' => 's'
+      },
+      rooms: ['a', 'd', 'j3', 'm', 'j1', 's', 'j2'],
+      extra_roommates: {},
+      partial_months: {},
+      fixed_rents: {},
+      extra_fees: {'j1' => 30}
+    },
+    'August 2014' => {
+      tenants: {
+        'Alex' => 'a',
+        'Danielle' => 'j3',
+        'Dmitry' => 'd',
+        'James' => 'j2',
+        'Jimmy+Honza' => 'j1',
+        'Mel' => 'm',
+        'Asali' => 's'
+      },
+      rooms: ['a', 'd', 'j3', 'm', 'j1', 's', 'j2'],
+      extra_roommates: {},
+      partial_months: {},
+      fixed_rents: {},
+      extra_fees: {'j1' => 30},
+      split_rooms: {'Jimmy+Honza' => {
+        'Jimmy' => 0.57,
+        'Honza' => 0.43
+      }}
     }
   }
   @last_month = @months.values.last
 
-  @all_tenants = @months.map {|k, v| v[:tenants].keys}.inject(:|).sort
+  @all_tenants = ['Alex','Asali','Danielle','Dmitry','Honza','James','Jimmy','Mel','Noemie']
 
   @months.each do |month_name, month|
     @months[month_name][:parameters] = month.reject {|k, v| k == :tenants}.to_json
     @months[month_name][:rent] = calculate_rent(month[:rooms], month[:extra_roommates], month[:partial_months], month[:fixed_rents], month[:extra_fees])
+    @months[month_name][:tenant_names] = @all_tenants.select {|t| has_tenant(month, t)}
   end
 
   erb :index
@@ -137,6 +254,21 @@ STARTING_COMMON_PRICE = 246.61
 
 TOTAL_RENT = 4_200
 TOLERANCE = 0.01
+
+def has_tenant(month, tenant)
+  if month[:tenants][tenant]
+    return true
+  elsif month[:split_rooms]
+    month[:split_rooms].each do |name, roommates|
+      roommates.each do |roommate, ratio|
+        if roommate == tenant
+          return true
+        end
+      end
+    end
+    return false
+  end
+end
 
 def calculate_rent(rooms, extra_roommates = {}, partial_months = {}, fixed_rents = {}, extra_fees = {})
   num_rooms = rooms.count
@@ -171,12 +303,11 @@ def calculate_rent(rooms, extra_roommates = {}, partial_months = {}, fixed_rents
   rents_by_room = Hash[room_sizes.merge(fixed_rents).map { |k, v| k }.zip(rents)]
 
   if total_rent >= TOTAL_RENT - TOLERANCE && total_rent <= TOTAL_RENT + TOLERANCE
-    # potentially make one penny adjustment to :j3 (or :a, if :j3 is unoccupied)
     adjustment = TOTAL_RENT - total_rent
-    if rents_by_room.include? 'j3'
-      rents_by_room['j3'] += adjustment
-    else
-      rents_by_room['j3'] += adjustment
+    if adjustment > 0
+      # if numbers don't quite add up, make one penny adjustment to a random room
+      random_room = rents_by_room.keys.sample
+      rents_by_room[random_room] += adjustment
     end
   else
     raise "Expected total to be #{TOTAL_RENT - TOLERANCE} - #{TOTAL_RENT + TOLERANCE} but got #{total_rent}"
@@ -184,10 +315,6 @@ def calculate_rent(rooms, extra_roommates = {}, partial_months = {}, fixed_rents
 
   extra_fees.each do |room, fee|
     rents_by_room[room] += fee
-  end
-
-  rents_by_room.each do |room, rent|
-    rents_by_room[room] = '%.2f' % rents_by_room[room]
   end
 
   rents_by_room
@@ -209,5 +336,5 @@ end
 # puts calculate_rent [:a, :d, :j3, :m, :j1, :s, :j2], {:s => 0.5}, {:j3 => 0.25}
 # puts 'Alex dies:'
 # puts calculate_rent [:d, :j3, :m, :j1, :s, :j2]
-# puts 'SEPTEMBER: Sara moving out after 1/5 month and Danielle moving in with fixed rent:'
+# puts 'SEPTEMBER 2013: Sara moving out after 1/5 month and Danielle moving in with fixed rent:'
 # puts calculate_rent [:a, :d, :j3, :m, :j1, :s, :j2], {}, {:s => 0.2}, {:j3 => 660.68}
