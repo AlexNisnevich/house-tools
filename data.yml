@@ -1,0 +1,185 @@
+globals:
+  room_sizes: # rooms named after initial occupant
+    a: 205
+    d: 205
+    j3: 170
+    m: 166
+    j1: 102
+    s: 93
+    j2: 82.5
+  price_per_sq_ft: # based on number of people
+    6: 3.18728
+    7: 2.773
+  starting_common_price: 246.61
+  total_rent: 4_200
+  tolerance: 0.01
+  tenants:
+    - Alex
+    - Asali
+    - Danielle
+    - Dmitry
+    - Honza
+    - James
+    - Jimmy
+    - Jordan
+    - Mel
+    - Noemie
+    - Sara
+months:
+  August 2013:
+    tenants:
+      Alex: a
+      Dmitry: d
+      James: j2
+      Jimmy: j1
+      Jordan: j3
+      Mel: m
+      Sara: s
+    extra_roommates:
+      s: 0.5
+    partial_months:
+      j3: 0.25
+    extra_fees:
+      j1: 30
+  September 2013:
+    tenants:
+      Alex: a
+      Danielle: j3
+      Dmitry: d
+      James: j2
+      Jimmy: j1
+      Mel: m
+      Sara: s
+    partial_months:
+      s: 0.2
+    fixed_rents:
+      j3: 660.68
+    extra_fees:
+      j1: 30
+  October 2013:
+    tenants:
+      Alex: a
+      Danielle: j3
+      Dmitry: d
+      James: j2
+      Jimmy: j1
+      Mel: m
+      Noemie: s
+    fixed_rents:
+      s: 824.71
+    extra_fees:
+      j1: 30
+  November 2013:
+    tenants:
+      Alex: a
+      Danielle: j3
+      Dmitry: d
+      James: j2
+      Jimmy: j1
+      Mel: m
+      Noemie: s
+    extra_fees:
+      j1: 30
+  December 2013:
+    tenants:
+      Alex: a
+      Danielle: j3
+      Dmitry: d
+      James: j2
+      Jimmy: j1
+      Mel: m
+      Noemie: s
+    extra_fees:
+      j1: 30
+  January 2014:
+    tenants:
+      Alex: a
+      Danielle: j3
+      Dmitry: d
+      James: j2
+      Jimmy: j1
+      Mel: m
+      Asali: s
+    extra_fees:
+      j1: 30
+  February 2014:
+    tenants:
+      Alex: a
+      Danielle: j3
+      Dmitry: d
+      James: j2
+      Jimmy: j1
+      Mel: m
+      Asali: s
+    extra_fees:
+      j1: 30
+  March 2014:
+    tenants:
+      Alex: a
+      Danielle: j3
+      Dmitry: d
+      James: j2
+      Jimmy: j1
+      Mel: m
+      Asali: s
+    extra_fees:
+      j1: 30
+  April 2014:
+    tenants:
+      Alex: a
+      Danielle: j3
+      Dmitry: d
+      James: j2
+      Jimmy: j1
+      Mel: m
+      Asali: s
+    extra_fees:
+      j1: 30
+  May 2014:
+    tenants:
+      Alex: a
+      Danielle: j3
+      Dmitry: d
+      James: j2
+      Jimmy: j1
+      Mel: m
+      Asali: s
+    extra_fees:
+      j1: 30
+  June 2014:
+    tenants:
+      Alex: a
+      Danielle: j3
+      Dmitry: d
+      James: j2
+      Jimmy: j1
+      Mel: m
+      Asali: s
+    extra_fees:
+      j1: 30
+  July 2014:
+    tenants:
+      Alex: a
+      Danielle: j3
+      Dmitry: d
+      James: j2
+      Jimmy: j1
+      Mel: m
+      Asali: s
+    extra_fees:
+      j1: 30
+  August 2014:
+    tenants:
+      Alex: a
+      Danielle: j3
+      Dmitry: d
+      James: j2
+      Jimmy+Honza: j1
+      Mel: m
+      Asali: s
+    extra_fees:
+      j1: 30
+    split_months:
+      Jimmy+Honza:
+        Jimmy: 0.57
+        Honza: 0.43

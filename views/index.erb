@@ -7,26 +7,25 @@
 		<% end %>
 		<th style="text-align: left;">Parameters</th>
 	</tr>
-	<% @months.each do |month_name, month| %>
+	<% @months.each do |month| %>
 		<tr>
-			<td><strong><%= month_name %></strong></td>
+			<td><strong><%= month.name %></strong></td>
 			<% @all_tenants.each do |tenant| %>
 				<td style="width: 100px; text-align: center;">
-					<% if month[:tenant_names].include? tenant %>
-						$<%= '%.2f' % rent_by_tenant(month, tenant) %>
+					<% if month.tenants.include? tenant %>
+						$<%= '%.2f' % month.rent_by_tenant(tenant) %>
 					<% end %>
 				</td>
 			<% end %>
-			<td style="font-size: 0.8em;"><%= month[:parameters] %></td>
+			<td style="font-size: 0.7em;"><%= month.parameters.to_json.gsub(',', ', ') %></td>
 		</tr>
 	<% end %>
 </table>
 
 <h1>Calculate Rent</h1>
 <form action="/calculate" method="post">
-	Rooms: <input name="rooms" type="text" value='<%= @last_month[:rooms].to_json %>' /><br />
-	Extra Roommates: <input name="extra_roommates" type="text" value='<%= @last_month[:extra_roommates].to_json %>' /><br />
-	Partial Months: <input name="partial_months" type="text" value='<%= @last_month[:partial_months].to_json %>' /><br />
-	Fixed Rents <input name="fixed_rents" type="text" value='<%= @last_month[:fixed_rents].to_json %>' /><br />
+	<textarea name="params" rows="20" cols="80"><%= JSON.pretty_generate(@months.last.parameters) %></textarea><br>
 	<input type="submit" />
 </form>
+
+<%= @yaml %>
