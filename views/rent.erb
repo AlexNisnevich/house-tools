@@ -1,0 +1,31 @@
+<h1>Monthly Rent</h1>
+<table>
+	<tr>
+		<th></th>
+		<% @all_tenants.each do |tenant| %>
+			<th><%= tenant %></th>
+		<% end %>
+		<th style="text-align: left;">Parameters</th>
+	</tr>
+	<% @months.each do |month| %>
+		<tr>
+			<td><strong><%= month.name %></strong></td>
+			<% @all_tenants.each do |tenant| %>
+				<td style="width: 100px; text-align: center;">
+					<% if month.tenants.include? tenant %>
+						$<%= '%.2f' % month.rent_by_tenant(tenant) %>
+					<% end %>
+				</td>
+			<% end %>
+			<td style="font-size: 0.7em;"><%= month.parameters.to_json.gsub(',', ', ') %></td>
+		</tr>
+	<% end %>
+</table>
+
+<h1>Calculate Rent</h1>
+<form action="/calculate" method="post">
+	<textarea name="params" rows="20" cols="80"><%= JSON.pretty_generate(@months.last.parameters) %></textarea><br>
+	<input type="submit" />
+</form>
+
+<%= @yaml %>

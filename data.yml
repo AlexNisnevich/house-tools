@@ -1,4 +1,5 @@
 globals:
+  name: Martin Luther King's Landing
   room_sizes: # rooms named after initial occupant
     a: 205
     d: 205
@@ -182,4 +183,12 @@ months:
     split_months:
       Jimmy+Honza:
         Jimmy: 0.57
-        Honza: 0.43
+  September 2014:
+    tenants:
+      Alex: a
+      Danielle: j3
+      Dmitry: d
+      James: j2
+      Honza: j1
+      Mel: m
+      Asali: s
