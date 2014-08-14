@@ -110,7 +110,7 @@ globals = data['globals']
 get '/' do
   html = ""
 
-  @months = data['months'].map {|name, params| Month.new(name, params, globals) }
+  @months = data['months'].map {|name, params| Month.new(name, params, globals) }.reverse
   @all_tenants = globals['tenants']
 
   erb :index
