@@ -224,7 +224,7 @@ get '/' do
 
   @months.each do |month_name, month|
     @months[month_name][:parameters] = month.reject {|k, v| k == :tenants}.to_json
-    @months[month_name][:rent] = calculate_rent(month[:rooms], month[:extra_roommates], month[:partial_months], month[:fixed_rents], month[:extra_fees])
+    @months[month_name][:rent] = calculate_rent(month)
     @months[month_name][:tenant_names] = @all_tenants.select {|t| has_tenant(month, t)}
   end
 
@@ -260,25 +260,39 @@ def has_tenant(month, tenant)
     return true
   elsif month[:split_rooms]
     month[:split_rooms].each do |name, roommates|
-      roommates.each do |roommate, ratio|
-        if roommate == tenant
-          return true
-        end
+      if roommates.keys.any? {|r| r == tenant}
+        return true
       end
     end
     return false
   end
 end
 
-def calculate_rent(rooms, extra_roommates = {}, partial_months = {}, fixed_rents = {}, extra_fees = {})
+def rent_by_tenant(month, tenant)
+  rent = month[:rent][month[:tenants][tenant]]
+  if month[:split_rooms]
+    month[:split_rooms].each do |name, roommates|
+      room_rent = month[:rent][month[:tenants][name]]
+      roommates.each do |roommate, ratio|
+        if roommate == tenant
+          rent = room_rent * ratio
+        end
+      end
+    end
+  end
+  rent
+end
+
+def calculate_rent(month)
+  rooms = month[:rooms]
   num_rooms = rooms.count
-  rooms = rooms.reject {|r| fixed_rents.include? r }
+  rooms = rooms.reject {|r| month[:fixed_rents].include? r }
   room_sizes = ROOM_SIZES.select {|k,v| rooms.include? k }
 
-  num_tenants = rooms.count + extra_roommates.count
-  tenants_per_room = Hash[rooms.map {|r| [r, extra_roommates.fetch(r, 0) + 1]}]
+  num_tenants = rooms.count + month[:extra_roommates].count
+  tenants_per_room = Hash[rooms.map {|r| [r, month[:extra_roommates].fetch(r, 0) + 1]}]
 
-  length_of_stay = Hash[rooms.map {|r| [r, partial_months[r] ? partial_months[r] : 1]}]
+  length_of_stay = Hash[rooms.map {|r| [r, month[:partial_months][r] ? month[:partial_months][r] : 1]}]
   man_months_per_room = Hash[rooms.map {|r| [r, tenants_per_room[r] * length_of_stay[r]]}]
 
   total_room_size = room_sizes.map {|k, v| length_of_stay[k] * v}.inject(:+)
@@ -287,11 +301,11 @@ def calculate_rent(rooms, extra_roommates = {}, partial_months = {}, fixed_rents
   total_before_normalization = STARTING_COMMON_PRICE * total_man_months +
                                 PRICE_PER_SQ_FT[num_rooms] * total_room_size
 
-  normalizer = (TOTAL_RENT - fixed_rents.values.inject(0, :+)) / total_before_normalization
+  normalizer = (TOTAL_RENT - month[:fixed_rents].values.inject(0, :+)) / total_before_normalization
 
-  rents = room_sizes.merge(fixed_rents).map do |room, size|
-    if fixed_rents.include? room
-      fixed_rents[room]
+  rents = room_sizes.merge(month[:fixed_rents]).map do |room, size|
+    if month[:fixed_rents].include? room
+      month[:fixed_rents][room]
     else
       ((PRICE_PER_SQ_FT[num_rooms] * size +
         STARTING_COMMON_PRICE * tenants_per_room[room]) *
@@ -300,7 +314,7 @@ def calculate_rent(rooms, extra_roommates = {}, partial_months = {}, fixed_rents
   end
 
   total_rent = rents.map(&:to_f).inject(:+)
-  rents_by_room = Hash[room_sizes.merge(fixed_rents).map { |k, v| k }.zip(rents)]
+  rents_by_room = Hash[room_sizes.merge(month[:fixed_rents]).map { |k, v| k }.zip(rents)]
 
   if total_rent >= TOTAL_RENT - TOLERANCE && total_rent <= TOTAL_RENT + TOLERANCE
     adjustment = TOTAL_RENT - total_rent
@@ -313,7 +327,7 @@ def calculate_rent(rooms, extra_roommates = {}, partial_months = {}, fixed_rents
     raise "Expected total to be #{TOTAL_RENT - TOLERANCE} - #{TOTAL_RENT + TOLERANCE} but got #{total_rent}"
   end
 
-  extra_fees.each do |room, fee|
+  month[:extra_fees].each do |room, fee|
     rents_by_room[room] += fee
   end
 
