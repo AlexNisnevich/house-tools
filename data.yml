@@ -178,12 +178,10 @@ months:
       Jimmy+Honza: j1
       Mel: m
       Asali: s
-    extra_fees:
-      j1: 30
     split_months:
       Jimmy+Honza:
-        Jimmy: 0.52
-        Honza: 0.48
+        Jimmy: 0.516129
+        Honza: 0.483871
   September 2014:
     tenants:
       Alex: a
@@ -276,5 +274,5 @@ move_in_move_out:
     - August 2014:
         from: Honza
         to: Jimmy
-        amount: 1519.96
-        why: $700 (security deposit) + $571.71 (last month's rent) + $248.25 (Aug 17 - Aug 31 rent)
+        amount: 1507.44
+        why: $700 (security deposit) + $571.71 (last month's rent) + $235.73 (Aug 17 - Aug 31 rent)
