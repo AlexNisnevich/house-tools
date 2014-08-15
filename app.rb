@@ -22,7 +22,11 @@ get '/rent' do
   erb :rent
 end
 
-post '/calculate' do
+post '/rent/calculate' do
   month = Month.new('', JSON.parse(params[:params]), @globals)
   'Rent by room: ' + month.rent.to_s
+end
+
+get '/move_in_move_out' do
+  erb :move_in_move_out
 end

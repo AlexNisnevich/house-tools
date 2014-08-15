@@ -1,0 +1,56 @@
+<h1><%= @globals['name'] %> :: Move In / Move Out</h1>
+<a href="/">[Home]</a>
+
+<p>Under the terms of our lease, each of the 6 initial tenants had to pay a security deposit ($4200 / 6 = $700 per person) and last month's rent (which we split proportionally based on room size). When a new tenant moves in, he/she should cover the previous room's occupant's share of the security deposit and last month's rent.</p>
+
+<p>Things got a little complicated because the smaller downstairs room <i>(now occupied by Danielle)</i> was not occupied when we signed the initial lease, and so did not have a share of security deposit or last month's rent. We resolved this by having Danielle pay the backyard-facing upstairs room's <i>(now occupied by Asali)</i> share of the security deposit. The current deposits / last month rents corresponding to each room are as follows:</p>
+
+<table cellspacing="20">
+	<tr>
+		<th>Tenant</th>
+		<th>Security Deposit</th>
+		<th>Last Month's Rent</th>
+		<th>Previous Occupants of Room</th>
+	</tr>
+	<% @data['move_in_move_out']['rooms'].each do |tenant, room| %>
+		<tr>
+			<td><b><%= tenant %></b></td>
+			<td style="text-align: center;">$<%= room['security'] %></td>
+			<td style="text-align: center;">$<%= room['last_month'] %></td>
+			<td><%= room['previous'].join(', ') rescue '' %></td>
+		</tr>
+	<% end %>
+</table>
+
+<h3>Planned Payments</h3>
+<table cellspacing="10">
+	<% @data['move_in_move_out']['planned'].each do |payments| %>
+		<% payments.each do |date, payment| %>
+			<tr>
+				<td><%= date %>:</td>
+				<td><%= payment['from'] %> &#8594; <%= payment['to'] %></td>
+				<td><b>$<%= payment['amount'] %></b></td>
+				<% if payment['why'] %>
+					<td style="font-size: 0.8em">(<%= payment['why'] %>)</td>
+				<% end %>
+			</tr>
+		<% end %>
+	<% end %>
+</table>
+
+
+<h3>History of Payments</h3>
+<table cellspacing="10">
+	<% @data['move_in_move_out']['history'].each do |payments| %>
+		<% payments.each do |date, payment| %>
+			<tr>
+				<td><%= date %>:</td>
+				<td><%= payment['from'] %> &#8594; <%= payment['to'] %></td>
+				<td><b>$<%= payment['amount'] %></b></td>
+				<% if payment['why'] %>
+					<td style="font-size: 0.8em">(<%= payment['why'] %>)</td>
+				<% end %>
+			</tr>
+		<% end %>
+	<% end %>
+</table>

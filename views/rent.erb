@@ -1,4 +1,6 @@
-<h1>Monthly Rent</h1>
+<h1><%= @globals['name'] %> :: Monthly Rent</h1>
+<a href="/">[Home]</a>
+
 <table>
 	<tr>
 		<th></th>
@@ -23,7 +25,7 @@
 </table>
 
 <h1>Calculate Rent</h1>
-<form action="/calculate" method="post">
+<form action="/rent/calculate" method="post">
 	<textarea name="params" rows="20" cols="80"><%= JSON.pretty_generate(@months.last.parameters) %></textarea><br>
 	<input type="submit" />
 </form>

@@ -182,7 +182,8 @@ months:
       j1: 30
     split_months:
       Jimmy+Honza:
-        Jimmy: 0.57
+        Jimmy: 0.52
+        Honza: 0.48
   September 2014:
     tenants:
       Alex: a
@@ -192,3 +193,88 @@ months:
       Honza: j1
       Mel: m
       Asali: s
+move_in_move_out:
+  rooms:
+    Alex:
+      security: 700
+      last_month: 900
+    Asali:
+      previous:
+        - Noemie
+        - Sara
+      security: 0
+      last_month: 543.03
+    Danielle:
+      previous:
+        - Jordan
+      security: 700
+      last_month: 0
+    Dmitry:
+      security: 700
+      last_month: 900
+    James:
+      security: 700
+      last_month: 509.56
+    Jimmy:
+      security: 700
+      last_month: 571.71
+    Mel:
+      security: 700
+      last_month: 775.70
+  history:
+    - May 2013:
+        from: Alex
+        to: (landlord)
+        amount: 1600
+        why: $700 (security deposit) + $900 (last month's rent)
+    - May 2013:
+        from: Dmitry
+        to: (landlord)
+        amount: 1600
+        why: $700 (security deposit) + $900 (last month's rent)
+    - May 2013:
+        from: James
+        to: (landlord)
+        amount: 1209.56
+        why: $700 (security deposit) + $509.56 (last month's rent)
+    - May 2013:
+        from: Jimmy
+        to: (landlord)
+        amount: 1271.71
+        why: $700 (security deposit) + $571.71 (last month's rent)
+    - May 2013:
+        from: Mel
+        to: (landlord)
+        amount: 1475.70
+        why: $700 (security deposit) + $775.70 (last month's rent)
+    - May 2013:
+        from: Sara
+        to: (landlord)
+        amount: 1243.03
+        why: $700 (security deposit) + $543.03 (last month's rent)
+    - June 2013:
+        from: Jordan
+        to: (no one)
+        amount: 0
+        why: didn't pay security deposit or last month's rent because his stay was very temporary
+    - September 2013:
+        from: Danielle
+        to: Sara
+        amount: 700
+        why: security deposit only -- Sara's last month's rent was covered by Asali
+    - September 2013:
+        from: Noemie
+        to: (no one)
+        amount: 0
+        why: didn't pay security deposit or last month's rent because her stay was very temporary
+    - January 2014:
+        from: Asali
+        to: Sara
+        amount: 543.03
+        why: last month's rent only -- Sara's deposit was covered by Danielle
+  planned:
+    - August 2014:
+        from: Honza
+        to: Jimmy
+        amount: 1519.96
+        why: $700 (security deposit) + $571.71 (last month's rent) + $248.25 (Aug 17 - Aug 31 rent)
